@@ -1595,11 +1595,7 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .year-mini-cell{ font-size:8.5px; padding-bottom:4px; }
 }
 @media (max-width: 860px), (max-height: 520px) and (orientation: landscape){
-  /* Telefonda body'nin kendi (krem) arka planı, tam ekran koyu katmanların
-     (auth-gate, sözler akışı vb.) alt güvenli alan (home indicator) şeridinde
-     dışarı sızıp görünmesine sebep oluyordu — burada da koyu renge çekiyoruz
-     ki hiçbir yerde krem bir şerit belirmesin. */
-  html, body{ overflow:hidden; background:var(--ink); }
+  html, body{ overflow:hidden; }
   #app{
     flex-direction:column; height:100vh; height:100dvh;
     background:var(--ink);
