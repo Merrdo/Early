@@ -50,7 +50,7 @@
   --ease: cubic-bezier(.22,.61,.36,1);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-html,body{height:100%; overscroll-behavior-y:none;}
+html,body{height:100%; overscroll-behavior-y:none; background:var(--ink);}
 body{
   margin:0;
   font-family:'Inter',sans-serif;
@@ -176,6 +176,7 @@ select:-webkit-autofill{
 .view{
   position:absolute; inset:0;
   overflow-y:auto;
+  overflow-x:hidden;
   overscroll-behavior-y:contain;
   -webkit-overflow-scrolling:touch;
   padding:0;
@@ -723,7 +724,7 @@ select:-webkit-autofill{
 .dc-item-edit-row input:focus{ border-color:var(--dawn); }
 .dc-item-del{ width:26px; height:26px; border-radius:7px; display:flex; align-items:center; justify-content:center; color:var(--muted); cursor:pointer; font-size:16px; flex-shrink:0; transition:background-color .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease), transform .15s var(--ease), opacity .15s var(--ease); }
 .dc-item-del:hover{ background:var(--rose-soft); color:var(--rose); }
-.dc-week-row{ display:grid; grid-template-columns:150px repeat(7,1fr); align-items:center; gap:6px; padding:7px 0; }
+.dc-week-row{ display:grid; grid-template-columns:150px repeat(7,minmax(0,1fr)); align-items:center; gap:6px; padding:7px 0; }
 .dc-week-head{ font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; text-align:center; padding-bottom:4px; border-bottom:1px solid var(--hairline); margin-bottom:4px; }
 .dc-week-head .dc-week-col{ text-align:center; line-height:1.5; }
 .dc-week-head .dc-week-col.today{ color:var(--dawn-dark); }
@@ -738,7 +739,7 @@ select:-webkit-autofill{
   0%{ opacity:0; transform:scale(0.4) rotate(-8deg); }
   100%{ opacity:1; transform:scale(1) rotate(0deg); }
 }
-.dc-week-cell{ width:26px; height:26px; margin:0 auto; border-radius:8px; background:var(--card-soft); border:1px solid var(--hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background-color .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease), transform .15s var(--ease), opacity .15s var(--ease); }
+.dc-week-cell{ width:100%; max-width:26px; aspect-ratio:1; margin:0 auto; border-radius:8px; background:var(--card-soft); border:1px solid var(--hairline); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background-color .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease), transform .15s var(--ease), opacity .15s var(--ease); }
 .dc-week-cell svg{ width:12px; height:12px; stroke:#fff; }
 .dc-week-cell.done{ background:var(--dc-color, var(--sage)); border-color:var(--dc-color, var(--sage)); }
 .dc-week-cell.off{ background:transparent; border:none; cursor:default; }
@@ -1644,20 +1645,31 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .nav-item svg{ width:19px; height:19px; }
   .nav-item span{ font-size:9px; font-weight:600; letter-spacing:0.01em; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:54px; }
 
-  /* ---- Ada'yı aç/kapatan tutamaç: kapsülün hemen üstünde, ortada yüzen bir tutamaç çubuğu ---- */
+  /* ---- Ada'yı aç/kapatan buton: kapsülün hemen üstünde, ortada yüzen,
+     telefona özel tasarlanmış yuvarlak bir kapatma/açma ikon-butonu.
+     Basılınca çubuk kapanır, tekrar basılınca açılır (ok simgesi yön değiştirir). ---- */
   .sidebar-notch{
     display:flex; align-items:center; justify-content:center;
     position:fixed; left:50%; top:auto; z-index:52;
-    bottom:calc(78px + env(safe-area-inset-bottom));
+    bottom:calc(88px + env(safe-area-inset-bottom));
     transform:translateX(-50%);
-    width:38px; height:5px; border-radius:99px;
-    background:rgba(255,255,255,0.22); color:transparent;
-    box-shadow:none;
-    transition:bottom .38s var(--ease), background .2s var(--ease);
+    width:40px; height:40px; border-radius:50%;
+    background:rgba(20,22,29,0.78);
+    color:rgba(255,255,255,0.88);
+    -webkit-backdrop-filter:blur(18px) saturate(1.5);
+    backdrop-filter:blur(18px) saturate(1.5);
+    box-shadow:0 8px 22px rgba(20,22,29,0.3), 0 1px 0 rgba(255,255,255,0.07) inset;
+    border:1px solid rgba(255,255,255,0.1);
+    transition:bottom .38s var(--ease), background .2s var(--ease), transform .2s var(--ease);
   }
-  .sidebar-notch svg{ display:none; }
-  .sidebar-notch:active{ background:rgba(255,255,255,0.4); }
-  #app.sidebar-collapsed .sidebar-notch{ bottom:calc(14px + env(safe-area-inset-bottom)); }
+  .sidebar-notch svg{
+    display:block; width:16px; height:16px;
+    transform:rotate(90deg);
+    transition:transform .38s var(--ease);
+  }
+  .sidebar-notch:active{ background:rgba(20,22,29,0.92); transform:translateX(-50%) scale(0.9); }
+  #app.sidebar-collapsed .sidebar-notch{ bottom:calc(16px + env(safe-area-inset-bottom)); }
+  #app.sidebar-collapsed .sidebar-notch svg{ transform:rotate(-90deg); }
 
   /* ---- Ana alan ---- */
   .main{
@@ -1669,11 +1681,13 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
     padding-bottom: calc(22px + env(safe-area-inset-bottom));
   }
   .view-inner{ padding:calc(26px + env(safe-area-inset-top)) 16px 28px; max-width:100%; }
-  /* Başlık: kaydırırken üstte yapışıp camsı bir zemin alan "büyük başlık" hissi */
+  /* Başlık: kaydırırken üstte yapışıp camsı bir zemin alan "büyük başlık" hissi.
+     Not: sabit krem renk yerine --paper temasını kullanır, böylece koyu temalarda
+     başlık şeridi de koyu olur (önceden her temada beyaz/krem kalıyordu). */
   .view-header{
     flex-wrap:wrap; gap:12px; margin:calc(-26px - env(safe-area-inset-top)) -16px 16px; padding:calc(20px + env(safe-area-inset-top)) 16px 14px;
     position:sticky; top:0; z-index:5;
-    background:rgba(246,244,239,0.82);
+    background:color-mix(in srgb, var(--paper) 82%, transparent);
     -webkit-backdrop-filter:blur(14px);
     backdrop-filter:blur(14px);
   }
@@ -1777,7 +1791,9 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .stats-card-head{ flex-wrap:wrap; gap:10px; }
   .rt-heat-controls{ flex-wrap:wrap; gap:6px; width:100%; justify-content:flex-start; }
   .rt-heat-controls .rt-select{ flex:1 1 auto; min-width:0; }
-  .dc-week-cell{ width:30px; height:30px; }
+  .dc-week-cell{ max-width:28px; }
+  .dc-week-row{ grid-template-columns:84px repeat(7,minmax(0,1fr)); gap:4px; }
+  .dc-week-name{ font-size:12px; }
   .dc-all-row{ flex-wrap:wrap; padding:11px 10px; }
   .dc-all-actions{ gap:0; }
   .dc-all-move, .dc-all-edit{ width:34px; height:34px; }
@@ -2403,6 +2419,18 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
 /* ---- "Akış modu" giriş butonu (Motivasyon başlığında) ---- */
 .btn-sf-launch{ background:rgba(20,22,29,0.06); color:var(--text-strong); border:1px solid var(--hairline); }
 .btn-sf-launch:hover{ background:var(--card-soft); }
+
+/* ================= KAYDIRMA ÇUBUKLARINI GİZLE (tüm uygulama) =================
+   Kaydırma işlevselliği (overflow:auto/scroll) tamamen korunur; sadece görsel
+   çubuk gizlenir. !important, önceki özel scrollbar stillerinin üzerine yazar. */
+*{
+  scrollbar-width:none !important;      /* Firefox */
+  -ms-overflow-style:none !important;   /* eski Edge/IE */
+}
+*::-webkit-scrollbar{
+  display:none !important;              /* Chrome/Safari/Android WebView */
+  width:0 !important; height:0 !important;
+}
 </style>
 </head>
 <body>
