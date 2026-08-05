@@ -1595,78 +1595,101 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
 }
 @media (max-width: 860px), (max-height: 520px) and (orientation: landscape){
   html, body{ overflow:hidden; }
-  #app{ flex-direction:column; height:100vh; height:100dvh; }
-
-  /* ---- Sidebar → alt gezinme çubuğu ----
-     Çubuk artık ekranın en altına sabit; üstünde duran küçük bir
-     çentiğe dokunarak tamamen aşağı gizlenebiliyor (daha fazla içerik
-     alanı için) ve tekrar dokununca geri geliyor. */
-  .sidebar{
-    position:fixed; left:0; right:0; bottom:0; top:auto; z-index:50;
-    width:100%; min-width:0; height:auto;
-    flex-direction:row;
-    padding: 6px calc(4px + env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) calc(4px + env(safe-area-inset-right));
+  #app{
+    flex-direction:column; height:100vh; height:100dvh;
     background:var(--ink);
-    box-shadow:0 -2px 18px rgba(20,22,29,0.18);
-    transition:transform .34s var(--ease);
-    transform:translateY(0);
+  }
+
+  /* ============================================================
+     MOBİL KABUK — "Yüzen Ada" tasarım dili
+     Masaüstündeki düz/kenar-kenar tasarımın aksine, telefonda gezinme
+     ekranın altında yüzen, camsı (blur) bir kapsül olarak durur.
+     İçerik köşeleri daha yuvarlak, kartlar daha belirgin gölgeli,
+     birincil eylemler dolgun/hap biçimli — gerçek bir native uygulama
+     hissi için. ---- */
+  .sidebar{
+    position:fixed; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); top:auto; z-index:50;
+    width:auto; min-width:0; height:auto;
+    flex-direction:row;
+    padding:7px 7px;
+    border-radius:26px;
+    background:rgba(20,22,29,0.72);
+    -webkit-backdrop-filter:blur(22px) saturate(1.5);
+    backdrop-filter:blur(22px) saturate(1.5);
+    box-shadow:0 14px 36px rgba(20,22,29,0.32), 0 1px 0 rgba(255,255,255,0.06) inset;
+    border:1px solid rgba(255,255,255,0.08);
+    transition:transform .38s var(--ease), opacity .38s var(--ease);
+    transform:translateY(0) scale(1);
     overflow-x:auto;
     overflow-y:hidden;
     -webkit-overflow-scrolling:touch;
   }
   #app.sidebar-collapsed .sidebar{
-    width:100%; min-width:0; opacity:1; filter:none;
-    padding: 6px calc(4px + env(safe-area-inset-left)) calc(6px + env(safe-area-inset-bottom)) calc(4px + env(safe-area-inset-right));
-    transform:translateY(100%);
+    width:auto; min-width:0; opacity:0; filter:none;
+    padding:7px 7px;
+    transform:translateY(140%) scale(0.9);
+    pointer-events:none;
   }
   .wordmark, .nav-sep, .sidebar-foot{ display:none; }
-  .nav{ flex-direction:row; gap:2px; width:max-content; min-width:100%; justify-content:space-around; }
+  .nav{ flex-direction:row; gap:1px; width:max-content; min-width:100%; justify-content:space-around; }
   .nav-item{
-    flex-direction:column; flex:0 0 auto; width:64px;
-    gap:3px; padding:7px 4px 6px; border-radius:12px;
+    flex-direction:column; flex:0 0 auto; width:60px;
+    gap:3px; padding:8px 4px 7px; border-radius:18px;
     align-items:center; justify-content:center;
+    transition: background .28s var(--ease), color .2s var(--ease), transform .2s var(--ease);
   }
+  .nav-item:active{ transform:scale(0.92); }
   .nav-item.active::before{ display:none; }
-  .nav-item.active{ background:var(--dawn-glow); }
-  .nav-item svg{ width:20px; height:20px; }
-  .nav-item span{ font-size:9.5px; letter-spacing:0.01em; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:58px; }
+  .nav-item.active{ background:var(--dawn); color:#2b1c04; box-shadow:0 4px 14px var(--dawn-shadow); }
+  .nav-item svg{ width:19px; height:19px; }
+  .nav-item span{ font-size:9px; font-weight:600; letter-spacing:0.01em; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:54px; }
 
-  /* ---- Alt paneli aç/kapatan küçük çentik ---- */
+  /* ---- Ada'yı aç/kapatan tutamaç: kapsülün hemen üstünde, ortada yüzen bir tutamaç çubuğu ---- */
   .sidebar-notch{
     display:flex; align-items:center; justify-content:center;
     position:fixed; left:50%; top:auto; z-index:52;
-    bottom:calc(64px + env(safe-area-inset-bottom));
+    bottom:calc(78px + env(safe-area-inset-bottom));
     transform:translateX(-50%);
-    width:46px; height:20px; border-radius:10px 10px 0 0;
-    background:var(--ink); color:var(--ink-text-dim);
-    box-shadow:0 -3px 10px rgba(20,22,29,0.18);
-    transition:bottom .34s var(--ease), color .2s var(--ease);
+    width:38px; height:5px; border-radius:99px;
+    background:rgba(255,255,255,0.22); color:transparent;
+    box-shadow:none;
+    transition:bottom .38s var(--ease), background .2s var(--ease);
   }
-  .sidebar-notch:active{ color:#fff; }
-  .sidebar-notch svg{ width:13px; height:13px; transform:rotate(-90deg); transition:transform .34s var(--ease); }
-  #app.sidebar-collapsed .sidebar-notch{ bottom:env(safe-area-inset-bottom); }
-  #app.sidebar-collapsed .sidebar-notch svg{ transform:rotate(90deg); }
+  .sidebar-notch svg{ display:none; }
+  .sidebar-notch:active{ background:rgba(255,255,255,0.4); }
+  #app.sidebar-collapsed .sidebar-notch{ bottom:calc(14px + env(safe-area-inset-bottom)); }
 
   /* ---- Ana alan ---- */
   .main{
-    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
     width:100%;
-    transition: padding-bottom .34s var(--ease);
+    transition: padding-bottom .38s var(--ease);
   }
   #app.sidebar-collapsed .main{
-    padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
   }
-  .view-inner{ padding:calc(30px + env(safe-area-inset-top)) 16px 28px; max-width:100%; }
-  .view-header{ flex-wrap:wrap; gap:12px; margin-bottom:20px; }
-  .view-title{ font-size:23px; }
+  .view-inner{ padding:calc(26px + env(safe-area-inset-top)) 16px 28px; max-width:100%; }
+  /* Başlık: kaydırırken üstte yapışıp camsı bir zemin alan "büyük başlık" hissi */
+  .view-header{
+    flex-wrap:wrap; gap:12px; margin:calc(-26px - env(safe-area-inset-top)) -16px 16px; padding:calc(20px + env(safe-area-inset-top)) 16px 14px;
+    position:sticky; top:0; z-index:5;
+    background:rgba(246,244,239,0.82);
+    -webkit-backdrop-filter:blur(14px);
+    backdrop-filter:blur(14px);
+  }
+  .view-title{ font-size:26px; letter-spacing:-0.01em; }
 
-  /* ---- Genel dokunma hedefleri ---- */
-  .btn{ padding:12px 18px; font-size:14px; }
-  .icon-btn{ width:40px; height:40px; }
-  .btn-sm{ padding:9px 14px; }
+  /* ---- Kartlar: telefonda daha yuvarlak ve belirgin ---- */
+  .stats-card, .qt-card, .theme-card, .book-body{ border-radius:22px !important; }
+
+  /* ---- Genel dokunma hedefleri: dolgun/hap biçimli birincil buton ---- */
+  .btn{ padding:13px 20px; font-size:14.5px; border-radius:14px; }
+  .btn-dawn{ border-radius:999px; font-weight:600; }
+  .icon-btn{ width:42px; height:42px; border-radius:14px; }
+  .btn-sm{ padding:10px 15px; border-radius:12px; }
 
   /* ---- Saat / Kronometre ---- */
-  .clock-stage{ height:calc(100vh - 64px - env(safe-area-inset-bottom)); height:calc(100dvh - 64px - env(safe-area-inset-bottom)); justify-content:flex-start; padding-top:calc(16vh + env(safe-area-inset-top)); }
+  .clock-stage{ height:calc(100vh - 84px - env(safe-area-inset-bottom)); height:calc(100dvh - 84px - env(safe-area-inset-bottom)); justify-content:flex-start; padding-top:calc(16vh + env(safe-area-inset-top)); }
   .clock-digits-static{ font-size:64px; }
   .sw-digits{ font-size:58px; }
   .clock-start-cta{
@@ -1684,7 +1707,7 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .sound-capsule.expanded{ width:min(300px, 78vw); }
   .sw-laps{
     position:fixed; top:auto; bottom:0; left:0; right:0; width:auto; height:38vh;
-    padding:16px 16px calc(112px + env(safe-area-inset-bottom));
+    padding:16px 16px calc(132px + env(safe-area-inset-bottom));
     background:var(--paper); border-top:1px solid var(--hairline);
     border-radius:20px 20px 0 0; box-shadow:0 -8px 30px rgba(20,22,29,0.12);
     z-index:4;
@@ -1808,12 +1831,18 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .tb-folder-badge{ flex-shrink:0; }
   .note-attachments{ padding:0 18px 14px; }
 
-  /* ---- Modallar ---- */
+  /* ---- Modallar: gerçek bir "sheet" gibi — üstte tutamaç çubuğuyla ---- */
   .overlay{ align-items:flex-end; }
   .modal, .modal[style]{
-    width:100% !important; max-width:100% !important; border-radius:22px 22px 0 0;
+    width:100% !important; max-width:100% !important; border-radius:28px 28px 0 0;
     max-height:92vh; max-height:92dvh;
-    padding:22px 18px calc(22px + env(safe-area-inset-bottom));
+    padding:26px 20px calc(22px + env(safe-area-inset-bottom));
+    position:relative;
+    box-shadow:0 -16px 44px rgba(20,22,29,0.22);
+  }
+  .modal::before{
+    content:''; position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    width:36px; height:4px; border-radius:99px; background:var(--hairline);
   }
   .row2{ flex-direction:column; gap:0; }
   /* iOS Safari, 16px'den küçük font'lu inputlara odaklanınca sayfayı otomatik yakınlaştırır; bunu önle */
@@ -1847,16 +1876,17 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .view-header{ margin-bottom:12px; }
   .view-title{ font-size:20px; }
 
-  /* ---- Alt gezinme çubuğu: daha ince ---- */
-  .sidebar{ padding-top:4px; padding-bottom:calc(4px + env(safe-area-inset-bottom)); }
-  .nav-item{ padding:5px 4px 4px; gap:2px; }
-  .nav-item svg{ width:18px; height:18px; }
-  .nav-item span{ font-size:8px; }
-  .main{ padding-bottom:calc(52px + env(safe-area-inset-bottom)); }
-  .sidebar-notch{ bottom:calc(52px + env(safe-area-inset-bottom)); }
+  /* ---- Alt gezinme adası: daha ince ---- */
+  .sidebar{ bottom:calc(8px + env(safe-area-inset-bottom)); padding:4px 5px; border-radius:20px; }
+  .nav-item{ padding:5px 4px 4px; gap:2px; border-radius:13px; }
+  .nav-item svg{ width:17px; height:17px; }
+  .nav-item span{ font-size:7.5px; }
+  .main{ padding-bottom:calc(58px + env(safe-area-inset-bottom)); }
+  .sidebar-notch{ bottom:calc(64px + env(safe-area-inset-bottom)); }
+  #app.sidebar-collapsed .sidebar-notch{ bottom:calc(10px + env(safe-area-inset-bottom)); }
 
   /* ---- Saat / Kronometre ---- */
-  .clock-stage{ padding-top:calc(5vh + env(safe-area-inset-top)); height:calc(100vh - 52px - env(safe-area-inset-bottom)); height:calc(100dvh - 52px - env(safe-area-inset-bottom)); }
+  .clock-stage{ padding-top:calc(5vh + env(safe-area-inset-top)); height:calc(100vh - 58px - env(safe-area-inset-bottom)); height:calc(100dvh - 58px - env(safe-area-inset-bottom)); }
   .clock-eyebrow{ margin-bottom:10px; }
   .clock-digits-static{ font-size:56px; }
   .sw-digits{ font-size:50px; }
