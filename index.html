@@ -1179,13 +1179,18 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
 }
 .quote-island.qi-show{ transform:translateX(-50%) translateY(0); opacity:1; pointer-events:auto; }
 .qi-pill{
-  display:flex; align-items:center; gap:10px; background:var(--ink); color:#fff; border-radius:22px;
+  display:flex; align-items:flex-start; gap:10px; background:var(--ink); color:#fff; border-radius:22px;
   padding:12px 14px 12px 16px; box-shadow:0 10px 34px rgba(20,22,29,0.35); max-width:min(400px, 88vw); cursor:pointer;
 }
-.qi-dot{ width:8px; height:8px; border-radius:50%; background:var(--dawn); flex-shrink:0; box-shadow:0 0 0 4px var(--dawn-glow); }
+.qi-dot{ width:8px; height:8px; border-radius:50%; background:var(--dawn); flex-shrink:0; box-shadow:0 0 0 4px var(--dawn-glow); margin-top:6px; }
 .qi-body{ min-width:0; }
-.qi-text{ font-family:'Fraunces',serif; font-size:13.5px; line-height:1.4; color:#fff; }
-.qi-author{ font-size:10.5px; color:var(--ink-text-dim); margin-top:2px; }
+/* Söz metni tek satıra sıkıştırılmaz; en fazla 4 satır gösterilip
+   devamı "…" ile kısaltılır, böylece uzun sözler de okunabilir kalır. */
+.qi-text{
+  font-family:'Fraunces',serif; font-size:14px; line-height:1.42; color:#fff;
+  display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;
+}
+.qi-author{ font-size:11px; color:var(--ink-text-dim); margin-top:3px; }
 .qi-like, .qi-close, .qi-copy{ width:26px; height:26px; border-radius:50%; flex-shrink:0; border:none; background:rgba(255,255,255,0.08); color:var(--ink-text-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background-color .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease), box-shadow .15s var(--ease), transform .15s var(--ease), opacity .15s var(--ease); }
 .qi-like svg, .qi-close svg, .qi-copy svg{ width:13px; height:13px; }
 .qi-like:hover, .qi-close:hover, .qi-copy:hover{ background:rgba(255,255,255,0.16); color:#fff; }
@@ -1193,8 +1198,13 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
 .qi-like.liked svg{ fill:var(--rose); }
 .qi-copy.copied{ color:var(--sage); }
 @media (max-width:720px){
-  .quote-island{ top:calc(10px + env(safe-area-inset-top)); }
-  .qi-text{ font-size:12.5px; }
+  .quote-island{ top:calc(10px + env(safe-area-inset-top)); left:50%; width:calc(100% - 24px); max-width:none; }
+  .quote-island.qi-show{ transform:translateX(-50%) translateY(0); }
+  .qi-pill{ max-width:100%; width:100%; padding:14px 16px 14px 17px; }
+  /* Telefonda motivasyon bildirimi: daha büyük, daha rahat okunan tipografi. */
+  .qi-text{ font-size:15.5px; line-height:1.46; -webkit-line-clamp:5; }
+  .qi-author{ font-size:12px; }
+  .qi-like, .qi-close, .qi-copy{ width:28px; height:28px; }
 }
 /* ===================== NOTES ===================== */
 .notes-layout{ display:flex; height:100%; }
@@ -1328,15 +1338,16 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
 }
 .reminder-toast-wrap.hide{ max-height:0; transition:max-height .3s cubic-bezier(.4,0,.2,1) .12s; }
 .reminder-toast{
-  pointer-events:auto; display:flex; align-items:center; gap:12px;
+  pointer-events:auto; display:flex; align-items:flex-start; gap:12px;
   background:var(--ink); color:var(--ink-text); border-radius:20px;
   padding:14px 18px 14px 16px; box-shadow:var(--shadow-2);
-  min-width:260px; max-width:min(88vw,380px); cursor:pointer;
+  min-width:260px; max-width:min(92vw,380px); cursor:pointer;
   transform:scale(0.3) translateY(-8px); opacity:0;
   transform-origin:top center;
   /* Açılış: hafif "pop" ile genişleyen dinamik-ada hissi. */
   transition:transform .46s cubic-bezier(.34,1.56,.64,1), opacity .26s var(--ease), border-radius .46s var(--ease);
 }
+.reminder-toast-icon{ margin-top:1px; }
 .reminder-toast.show{ transform:scale(1) translateY(0); opacity:1; border-radius:16px; }
 .reminder-toast.hide{
   /* Kapanış: açılıştan ayrı, daha hızlı ve sıçramasız — adanın kendi
@@ -1386,8 +1397,15 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
 .reminder-toast-icon svg{ width:17px; height:17px; }
 .reminder-toast-body{ flex:1; min-width:0; }
 .reminder-toast-title{ font-size:10.5px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-text-dim); margin-bottom:2px; }
-.reminder-toast-text{ font-size:13.5px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.reminder-toast-time{ font-size:11.5px; color:var(--ink-text-dim); font-variant-numeric:tabular-nums; flex-shrink:0; }
+/* Uzun hatırlatıcı/motivasyon metinleri tek satırda kesilmesin diye
+   (mobilde en sık okunabilirlik şikayeti buradan gelir) satır kırılımına
+   izin verilir; en fazla 3 satırla sınırlanıp devamı "…" ile kısaltılır. */
+.reminder-toast-text{
+  font-size:14.5px; line-height:1.38; font-weight:500;
+  white-space:normal; overflow:hidden;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+}
+.reminder-toast-time{ font-size:11.5px; color:var(--ink-text-dim); font-variant-numeric:tabular-nums; flex-shrink:0; align-self:flex-start; margin-top:1px; }
 .lightbox-inner{ position:relative; max-width:90vw; max-height:90vh; }
 .lightbox-inner img{ max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:var(--shadow-2); display:block; }
 .lightbox-close{ position:absolute; top:-16px; right:-16px; background:var(--ink); color:#fff; border-color:var(--ink); }
@@ -1870,7 +1888,14 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   /* ---- Diğer ---- */
   #reminderToastHost{ top:calc(14px + env(safe-area-inset-top)); width:calc(100% - 28px); }
   .reminder-toast-wrap{ width:100%; }
-  .reminder-toast{ min-width:0; width:100%; max-width:100%; }
+  .reminder-toast{ min-width:0; width:100%; max-width:100%; padding:15px 16px 15px 14px; }
+  /* Telefonda hatırlatıcı/alarm bildirimleri: daha büyük başlık ve gövde
+     yazısı, 4 satıra kadar kırpılmadan okunabilsin. */
+  .reminder-toast-title{ font-size:11px; }
+  .reminder-toast-text{ font-size:15px; line-height:1.42; -webkit-line-clamp:4; }
+  .reminder-toast-time{ font-size:12px; }
+  .reminder-toast-icon{ width:36px; height:36px; }
+  .reminder-toast-icon svg{ width:18px; height:18px; }
   .auth-gate-word{ font-size:30px; }
   .auth-gate-sub{ max-width:280px; }
 }
