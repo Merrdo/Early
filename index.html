@@ -1764,12 +1764,15 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .month-label{ font-size:16px; min-width:0; }
   .dow-row{ gap:4px; }
   .dow{ font-size:9.5px; }
-  .month-grid{ gap:6px; grid-template-rows:none; grid-auto-rows:minmax(0,1fr); }
+  .month-grid{ gap:5px; grid-template-rows:repeat(6,minmax(0,1fr)); grid-auto-rows:minmax(0,1fr); }
   /* Gün kareleri telefonda çok küçük kaldığı için sadeleştirildi: küçük
      etiket/dakika yazıları yerine ortalanmış gün numarası + ince alt
-     çubuk/rozet kullanılıyor. Detaylar zaten güne dokununca açılıyor. */
+     çubuk/rozet kullanılıyor. Detaylar zaten güne dokununca açılıyor.
+     aspect-ratio kaldırıldı: kare hücre, uzayan ızgara satırı içinde
+     ortalanınca satırlar arasında boşluk bırakıyordu — hücre artık
+     satırın tüm yüksekliğini dolduruyor. */
   .day-cell{
-    padding:4px; border-radius:13px; aspect-ratio:1/1;
+    padding:4px; border-radius:13px; aspect-ratio:auto;
     align-items:center; justify-content:center;
   }
   .day-cell.today{ background:var(--dawn-soft); }
@@ -1780,17 +1783,20 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .day-mins{ display:none; }
   .day-fill-track{ left:9px; right:9px; bottom:6px; height:2.5px; }
   .day-goal-tick{ width:14px; height:14px; top:4px; right:4px; }
-  .year-grid{ grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(6,minmax(0,1fr)); gap:8px; }
-  .year-month{ padding:8px 8px 8px; }
-  .year-month-label{ font-size:11.5px; margin-bottom:4px; }
-  .year-mini-dow-row{ margin-bottom:2px; }
-  .year-mini-dow{ font-size:7px; }
-  .year-mini-cell{ font-size:8px; padding-bottom:4px; }
-  .year-mini-cell.has-special:not(.today)::after{ width:2.5px; height:2.5px; bottom:1px; }
-  .hour-row{ gap:10px; padding:11px 2px; }
-  .hour-label{ width:48px; font-size:11px; padding:6px 3px; }
-  .time-input{ width:128px; font-size:12px; }
+  /* Telefonda mini takvim ızgaraları sıkışıp okunaksız hale geldiği için
+     yıllık görünüm sadece ay isimlerinden oluşan bir liste/ızgaraya
+     indirgeniyor; ayın günleri, dokunulduğunda açılan ay görünümünde
+     zaten mevcut. */
+  .year-grid{ grid-template-columns:repeat(3,1fr); grid-template-rows:none; grid-auto-rows:minmax(64px,auto); gap:10px; overflow-y:auto; }
+  .year-month{ padding:0; align-items:center; justify-content:center; min-height:64px; }
+  .year-month-label{ font-size:13.5px; margin-bottom:0; }
+  .year-mini-dow-row, .year-mini-grid{ display:none; }
+  .hour-row{ gap:6px 10px; padding:11px 2px; flex-wrap:wrap; }
+  .hour-label{ width:auto; flex-shrink:0; font-size:11px; padding:6px 8px; }
+  .time-input{ width:auto; max-width:none; font-size:12px; }
+  .hour-tasks{ flex-basis:100%; min-width:0; }
   .task-chip{ padding:10px 10px; }
+  .task-text{ min-width:0; }
   .task-check{ width:22px; height:22px; }
   .task-del, .task-reminder-btn{ opacity:0.55; width:18px; height:18px; }
   .hour-add{ opacity:0.85 !important; padding:10px 4px; }
@@ -1883,7 +1889,7 @@ input.theme-card-code-hex-input:focus{ border-color:var(--dawn-dark); }
   .field input[type=text], .field input[type=date], .field select, .field textarea,
   .notes-search-wrap input, .lib-search-wrap input, .rt-name-input, .time-input, .task-text,
   .rt-select, .tb-select{ font-size:16px !important; }
-  .time-input{ width:132px; padding:6px 6px; }
+  .time-input{ width:auto; max-width:none; padding:6px 8px; }
 
   /* ---- Diğer ---- */
   #reminderToastHost{ top:calc(14px + env(safe-area-inset-top)); width:calc(100% - 28px); }
@@ -3738,9 +3744,7 @@ function initGoogleAuth(){
 function isIOSStandalone(){
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const standalone = window.matchMedia('(display-mode: standalone)').matches ||
-                      window.matchMedia('(display-mode: fullscreen)').matches ||
-                      window.navigator.standalone === true;
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   return isIOS && standalone;
 }
 /* ---------------------------------------------------------------------
@@ -11453,9 +11457,7 @@ const EarlyPWA = (function(){
   const installSub = document.getElementById('installRowSub');
 
   function isStandaloneNow(){
-    return window.matchMedia('(display-mode: standalone)').matches ||
-           window.matchMedia('(display-mode: fullscreen)').matches ||
-           window.navigator.standalone === true;
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   }
   function isIOSDevice(){
     return /iP(hone|ad|od)/.test(navigator.userAgent) ||
@@ -12051,9 +12053,7 @@ function initFullscreenToggle(){
   // modda tamamen gizlenebiliyor. Bu durumda kullanıcıyı bilgilendir.
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                        window.matchMedia('(display-mode: fullscreen)').matches ||
-                        window.navigator.standalone === true;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
   if(isIOS && !isStandalone){
     const sub = toggle.closest('.settings-row')?.querySelector('.settings-row-sub');
     if(sub) sub.textContent = 'iPhone/iPad\'de Safari sekmesi içindeyken adres çubuğu tamamen gizlenemiyor. Paylaş menüsünden "Ana Ekrana Ekle" ile kurup oradan açarsan tam ekran çalışır.';
