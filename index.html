@@ -3738,7 +3738,9 @@ function initGoogleAuth(){
 function isIOSStandalone(){
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const standalone = window.matchMedia('(display-mode: standalone)').matches ||
+                      window.matchMedia('(display-mode: fullscreen)').matches ||
+                      window.navigator.standalone === true;
   return isIOS && standalone;
 }
 /* ---------------------------------------------------------------------
@@ -11451,7 +11453,9 @@ const EarlyPWA = (function(){
   const installSub = document.getElementById('installRowSub');
 
   function isStandaloneNow(){
-    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    return window.matchMedia('(display-mode: standalone)').matches ||
+           window.matchMedia('(display-mode: fullscreen)').matches ||
+           window.navigator.standalone === true;
   }
   function isIOSDevice(){
     return /iP(hone|ad|od)/.test(navigator.userAgent) ||
@@ -12047,7 +12051,9 @@ function initFullscreenToggle(){
   // modda tamamen gizlenebiliyor. Bu durumda kullanıcıyı bilgilendir.
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                        window.matchMedia('(display-mode: fullscreen)').matches ||
+                        window.navigator.standalone === true;
   if(isIOS && !isStandalone){
     const sub = toggle.closest('.settings-row')?.querySelector('.settings-row-sub');
     if(sub) sub.textContent = 'iPhone/iPad\'de Safari sekmesi içindeyken adres çubuğu tamamen gizlenemiyor. Paylaş menüsünden "Ana Ekrana Ekle" ile kurup oradan açarsan tam ekran çalışır.';
